@@ -1,9 +1,11 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Group, Heading } from "@chakra-ui/react";
+import { ChartLine } from "lucide-react";
 
 export function Menu() {
     return (
-        <Box  >
-            <Heading as="h1">Trading Position Calculator</Heading>
-        </Box>
+        <Group direction="row">
+            <ChartLine size={30} />
+            <Heading size="2xl">Trading Position Calculator</Heading>
+        </Group>
     );
 }

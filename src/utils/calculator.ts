@@ -5,7 +5,7 @@ export function getPositionSize(accountBalance: number, maxRiskPercent: number, 
 }
 
 export function getPositionRisk(accountBalance: number, leverage: number, stopLossPercent: number, positionSize: number): number {
-  const riskAmount = positionSize * stopLossPercent / leverage;
+  const riskAmount = positionSize * stopLossPercent * leverage;
   const riskPercent = riskAmount / accountBalance;
   return riskPercent;
 }

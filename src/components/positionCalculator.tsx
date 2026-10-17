@@ -1,5 +1,5 @@
 import { getPositionSize } from '@/utils/calculator';
-import { Box, Container, Field, Fieldset, Heading, NumberInput, Separator, VStack, Text } from '@chakra-ui/react'
+import { GridItem, Field, Fieldset, Heading, NumberInput, Separator, Text, Grid } from '@chakra-ui/react'
 import { useMemo, useState } from 'react';
 
 export function PositionCalculator() {
@@ -33,12 +33,13 @@ export function PositionCalculator() {
     console.log(form);
 
     return (
-        <VStack >
-            <Container colorPalette="green">
-                <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
-                    <Heading as="h2" size="lg">Position Calculator</Heading>
-                    <Separator />
-                    <Fieldset.Root size="md" mt={5}>
+        <>
+            <Grid
+                templateColumns="repeat(2, auto)"
+                templateRows="repeat(2, auto)"
+                gap="2">
+                <GridItem mt={4} p={4} borderWidth="1px" borderRadius="md" >
+                    <Fieldset.Root size="md">
                         <Fieldset.Content>
                             <Field.Root>
                                 <Field.Label >Account Balance (USDT)</Field.Label>
@@ -111,13 +112,13 @@ export function PositionCalculator() {
                             </Field.Root>
                         </Fieldset.Content>
                     </Fieldset.Root>
-                </Box>
-                <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
-                    <Heading as="h3" size="md">Position Size: {positionSize.toFixed(2)} USDT</Heading>
+                </GridItem>
+                <GridItem mt={4} p={4} borderWidth="1px" borderRadius="md" >
+                    <Heading size="lg">Position Size: {positionSize.toFixed(2)} USDT</Heading>
                     <Text>Max Loss: {(positionSize * form.stopLossPercent * form.leverage).toFixed(2)} USDT</Text>
                     <Text>Max Profit: {(positionSize * form.takeProfitPercent * form.leverage).toFixed(2)} USDT</Text>
-                </Box>
-            </Container>
-        </VStack>
+                </GridItem>
+            </Grid>
+        </>
     );
 }
