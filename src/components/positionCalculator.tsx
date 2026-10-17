@@ -1,5 +1,5 @@
 import { getPositionSize } from '@/utils/calculator';
-import { GridItem, Field, Fieldset, Heading, NumberInput, Separator, Text, Grid } from '@chakra-ui/react'
+import { GridItem, Field, Fieldset, Heading, NumberInput, Text, Grid } from '@chakra-ui/react'
 import { useMemo, useState } from 'react';
 
 export function PositionCalculator() {
