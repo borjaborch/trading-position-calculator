@@ -1,4 +1,4 @@
-import { Container, Tabs } from '@chakra-ui/react'
+import { AppShell, Container, Tabs } from '@mantine/core'
 import { PositionCalculator } from './components/positionCalculator'
 import { Menu } from './components/menu'
 import { Calculator, Gauge } from 'lucide-react'
@@ -8,19 +8,27 @@ import { RiskCalculator } from './components/riskCalculator'
 function App() {
 
   return (
-    <>
-      <Container colorPalette="green">
+    <AppShell header={{ height: 64 }} padding="md">
+      <AppShell.Header px="md">
         <Menu />
-        <Tabs.Root defaultValue="position-calculator" mt={4}>
+      </AppShell.Header>
+      <AppShell.Main>
+        <Container size="lg">
+        <Tabs defaultValue="position-calculator" color="green" mt="md">
           <Tabs.List>
-            <Tabs.Trigger value="position-calculator"><Calculator /> Position Calculator</Tabs.Trigger>
-            <Tabs.Trigger value="risk-calculator"><Gauge />Risk Calculator</Tabs.Trigger>
+            <Tabs.Tab value="position-calculator" leftSection={<Calculator size={16} />}>
+              Position Calculator
+            </Tabs.Tab>
+            <Tabs.Tab value="risk-calculator" leftSection={<Gauge size={16} />}>
+              Risk Calculator
+            </Tabs.Tab>
           </Tabs.List>
-          <Tabs.Content value="position-calculator"><PositionCalculator /></Tabs.Content>
-          <Tabs.Content value="risk-calculator"><RiskCalculator /></Tabs.Content>
-        </Tabs.Root>
-      </Container>
-    </>
+          <Tabs.Panel value="position-calculator"><PositionCalculator /></Tabs.Panel>
+          <Tabs.Panel value="risk-calculator"><RiskCalculator /></Tabs.Panel>
+        </Tabs>
+        </Container>
+      </AppShell.Main>
+    </AppShell>
   )
 }
 

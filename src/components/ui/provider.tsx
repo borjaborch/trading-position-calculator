@@ -1,15 +1,6 @@
-"use client"
+import { MantineProvider } from "@mantine/core"
+import type { ReactNode } from "react"
 
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react"
-import {
-  ColorModeProvider,
-  type ColorModeProviderProps,
-} from "./color-mode"
-
-export function Provider(props: ColorModeProviderProps) {
-  return (
-    <ChakraProvider value={defaultSystem}>
-      <ColorModeProvider {...props} />
-    </ChakraProvider>
-  )
+export function Provider({ children }: { children: ReactNode }) {
+  return <MantineProvider defaultColorScheme="light">{children}</MantineProvider>
 }

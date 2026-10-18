@@ -1,128 +1,112 @@
-import { getPositionRisk } from '@/utils/calculator';
-import { GridItem, Field, Fieldset, Heading, NumberInput, Text, Grid } from '@chakra-ui/react'
-import { useMemo, useState } from 'react';
+import { getPositionRisk } from '@/utils/calculator'
+import { Badge, Card, Fieldset, Grid, List, NumberInput, Paper, Stack, Title, Group, NumberFormatter } from '@mantine/core'
+import { useMemo, useState } from 'react'
 
 export function RiskCalculator() {
-
     const [form, setForm] = useState({
         accountBalance: 30,
         positionSize: 10,
         leverage: 9,
         stopLossPercent: 0.01,
         takeProfitPercent: 0.02,
-    });
+    })
 
     const updateField =
-        (field: keyof typeof form) =>
-            ({ valueAsNumber }: { valueAsNumber: number }) => {
-                setForm(prev => ({
-                    ...prev,
-                    [field]: Number.isNaN(valueAsNumber) ? 0 : valueAsNumber,
-                }));
-            };
+        (field: keyof typeof form, scale = 1) =>
+            (value: number | string) => {
+                const numericValue = typeof value === 'number' ? value : Number(value)
+                setForm((previous) => ({
+                    ...previous,
+                    [field]: Number.isFinite(numericValue) ? numericValue * scale : 0,
+                }))
+            }
 
     const riskPercentage = useMemo(() => {
         return getPositionRisk(
             form.accountBalance,
             form.leverage,
             form.stopLossPercent,
-            form.positionSize
-        );
-    }, [form]);
-
-    console.log(form);
+            form.positionSize,
+        )
+    }, [form])
 
     return (
-        <>
-            <Grid
-                templateColumns="repeat(2, auto)"
-                templateRows="repeat(2, auto)"
-                gap="2">
-                <GridItem mt={4} p={4} borderWidth="1px" borderRadius="md" >
-                    <Fieldset.Root size="md">
-                        <Fieldset.Content>
-                            <Field.Root>
-                                <Field.Label >Account Balance (USDT)</Field.Label>
-                                <NumberInput.Root
-                                    defaultValue={form.accountBalance.toString()}
-                                    min={0}
-                                    formatOptions={{
-                                        style: "currency",
-                                        currency: "USD",
-                                        currencyDisplay: "symbol",
-                                        currencySign: "standard",
-                                    }}
-                                    onValueChange={updateField('accountBalance')}
-                                >
-                                    <NumberInput.Control />
-                                    <NumberInput.Input />
-                                </NumberInput.Root>
-                            </Field.Root>
-                            <Field.Root>
-                                <Field.Label>Position Size</Field.Label>
-                                <NumberInput.Root
-                                    defaultValue={form.positionSize.toString()}
-                                    step={0.01}
-                                    min={0}
-                                    formatOptions={{
-                                        style: "currency",
-                                        currency: "USD",
-                                        currencyDisplay: "symbol",
-                                        currencySign: "standard",
-                                    }}
-                                    onValueChange={updateField('positionSize')}
-                                >
-                                    <NumberInput.Input />
-                                    <NumberInput.Control />
-                                </NumberInput.Root>
-                            </Field.Root>
-                            <Field.Root>
-                                <Field.Label>Leverage</Field.Label>
-                                <NumberInput.Root
-                                    defaultValue={form.leverage.toString()}
-                                    step={1}
-                                    min={1}
-                                    onValueChange={updateField('leverage')}
-                                >
-                                    <NumberInput.Input />
-                                    <NumberInput.Control />
-                                </NumberInput.Root>
-                            </Field.Root>
-                            <Field.Root>
-                                <Field.Label>Stop Loss (%)</Field.Label>
-                                <NumberInput.Root
-                                    defaultValue={(form.stopLossPercent * 100).toString()}
-                                    step={0.0001}
-                                    min={0}
-                                    formatOptions={{ style: "percent", minimumFractionDigits: 2 }}
-                                    onValueChange={updateField('stopLossPercent')}
-                                >
-                                    <NumberInput.Input />
-                                    <NumberInput.Control />
-                                </NumberInput.Root>
-                            </Field.Root>
-                            <Field.Root>
-                                <Field.Label>Take Profit (%)</Field.Label>
-                                <NumberInput.Root
-                                    defaultValue={(form.takeProfitPercent * 100).toString()}
-                                    step={0.0001}
-                                    min={0}
-                                    formatOptions={{ style: "percent", minimumFractionDigits: 2 }}
-                                    onValueChange={updateField('takeProfitPercent')}
-                                >
-                                    <NumberInput.Input />
-                                    <NumberInput.Control />
-                                </NumberInput.Root>
-                            </Field.Root>
-                        </Fieldset.Content>
-                    </Fieldset.Root>
-                </GridItem>
-                <GridItem mt={4} p={4} borderWidth="1px" borderRadius="md" >
-                    <Heading size="lg">Risk Size: {(riskPercentage * 100).toFixed(2)}%</Heading>
-                    <Text>Max Loss: {(form.positionSize * form.stopLossPercent * form.leverage).toFixed(2)} USDT</Text>
-                    <Text>Max Profit: {(form.positionSize * form.takeProfitPercent * form.leverage).toFixed(2)} USDT</Text>
-                </GridItem>
-            </Grid>
-        </>
-    );
+        <Grid gap="md" mt="md">
+            <Grid.Col span={{ base: 12, md: 6 }}>
+                <Paper withBorder p="md" radius="md">
+                    <Fieldset legend="Risk parameters">
+                        <Stack gap="sm">
+                            <NumberInput
+                                label="Account Balance (USDT)"
+                                defaultValue={form.accountBalance}
+                                min={0}
+                                step={0.01}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                prefix="$"
+                                thousandSeparator=","
+                                onChange={updateField('accountBalance')}
+                            />
+                            <NumberInput
+                                label="Position Size (USDT)"
+                                defaultValue={form.positionSize}
+                                step={0.01}
+                                min={0}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                prefix="$"
+                                thousandSeparator=","
+                                onChange={updateField('positionSize')}
+                            />
+                            <NumberInput
+                                label="Leverage"
+                                defaultValue={form.leverage}
+                                step={1}
+                                min={1}
+                                onChange={updateField('leverage')}
+                            />
+                            <NumberInput
+                                label="Stop Loss (%)"
+                                defaultValue={form.stopLossPercent * 100}
+                                step={0.01}
+                                min={0}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                suffix="%"
+                                onChange={updateField('stopLossPercent', 0.01)}
+                            />
+                            <NumberInput
+                                label="Take Profit (%)"
+                                defaultValue={form.takeProfitPercent * 100}
+                                step={0.01}
+                                min={0}
+                                decimalScale={2}
+                                fixedDecimalScale
+                                suffix="%"
+                                onChange={updateField('takeProfitPercent', 0.01)}
+                            />
+                        </Stack>
+                    </Fieldset>
+                </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+                <Card withBorder>
+                    <Card.Section p="md" withBorder>
+                        <Group justify='space-between'>
+                            <Title size="h4">Risk Size: </Title>
+                            <Badge size="xl" variant='light' color="pink">
+                                <NumberFormatter value={riskPercentage * 100} decimalScale={2} fixedDecimalScale suffix="%" />
+                            </Badge>
+                        </Group>
+                    </Card.Section>
+                    <Card.Section p="md">
+                        <List>
+                            <List.Item>Max Loss: {<NumberFormatter value={form.positionSize * form.stopLossPercent * form.leverage} decimalScale={2} fixedDecimalScale prefix="$" thousandSeparator="," />}</List.Item>
+                            <List.Item>Max Profit: {<NumberFormatter value={form.positionSize * form.takeProfitPercent * form.leverage} decimalScale={2} fixedDecimalScale prefix="$" thousandSeparator="," />}</List.Item>
+                        </List>
+                    </Card.Section>
+                </Card>
+            </Grid.Col>
+        </Grid>
+    )
 }
